@@ -11,25 +11,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import cross_val_predict
 import seaborn as sns
 
-# with open('shot_logs.csv', 'r') as dest_f:
-#     data_iter = csv.reader(dest_f, delimiter=',', quotechar='"')
-#     data = [data for data in data_iter]
-# shots = np.asarray(data)
-
-# # Fill in missing shot clock data
-# for row in shots:
-#     if row[8] == '': row[8] = row[7]
-
-
-# le = LabelEncoder()
-# for col in shots.T:
-#     shots[col] = le.fit_transform(shots[col])
-
-# print shots
-
-# # Get rid of useless columns (14 attributes)
-# shots = shots[1:, :]
-# shots = np.column_stack((shots[:, 2:13],shots[:,15:18],shots[:,20]))
+sns.set(color_codes=True)
 
 df = pd.read_csv("nursery.csv")
 
@@ -54,27 +36,28 @@ train_x = train[[x for x in train.columns if label not in x]]
 test_y = test[label]
 test_x = test[[x for x in test.columns if label not in x]]
 
-print test_x.shape
-print test_y.shape
-print train_x.shape
-print train_y.shape
+training_accuracy = []
+validation_accuracy = []
+test_accuracy = []
+k_values = range(1,11,2)
 
 # For knn
 print "--- KNN ---"
-for k in range(1,51,2):
+for k in k_values:
+    # Define the classifier
     clf = neighbors.KNeighborsClassifier(k, weights='distance')
     clf.fit(train_x, train_y)
 
-    print 'TeE K:', 1 - accuracy_score(test_y, clf.predict(test_x))
+    print 'K: ', k
 
-    scores = cross_val_score(clf, train_x, train_y, cv=7)
-    print 'TrE k=',k,':',1 - scores.mean()
+    training_accuracy.append(accuracy_score(train_y, clf.predict(train_x)))
+    cv = cross_val_score(clf, train_x, train_y, cv=7).mean()
+    validation_accuracy.append(cv)
+    test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
 
-# For svm
-print '--- SVM ---'
-for kernel in ['linear','poly','rbf']:
-    clf = svm.SVC(kernel=kernel)
-    clf.fit(train_x, train_y)
-    clf.predict(test_x)
-    print kernel,'-', accuracy_score(test_y, clf.predict(test_x))
+line1, = plt.plot(k_values, training_accuracy, 'r', label="Training Accuracy")
+line2, = plt.plot(k_values, validation_accuracy, 'b', label="Validation Accuracy")
+line1, = plt.plot(k_values, test_accuracy, 'g', label="Testing Accuracy")
+plt.legend(bbox_to_anchor=(0.92, 0.25), bbox_transform=plt.gcf().transFigure)
+plt.show()
 
