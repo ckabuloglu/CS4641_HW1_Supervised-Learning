@@ -13,23 +13,18 @@ import seaborn as sns
 
 sns.set(color_codes=True)
 
-df = pd.read_csv("nursery.csv")
+df = pd.read_csv("letter.csv")
 
 # Convert strings into frequency numbers
 labelencoder=LabelEncoder()
-for col in df.columns:
-    df[col] = labelencoder.fit_transform(df[col])
+# for col in df.columns:
+df['lettr'] = labelencoder.fit_transform(df['lettr'])
 
-print df.shape
+# Split into train and test
+train, test = train_test_split(df, test_size = 0.20)
 
-# Split into train and test (75% train - 6499 rows, 25% test - 1625 rows)
-train, test = train_test_split(df, test_size = 0.25)
-
-label = 'result'
-# General x,y
-data_y = df[label]
-data_x = df[[x for x in train.columns if label not in x]]
 # Train set
+label = 'lettr'
 train_y = train[label]
 train_x = train[[x for x in train.columns if label not in x]]
 # Test/Validation set
@@ -63,7 +58,9 @@ line1, = plt.plot(k_values, test_accuracy, 'g', label="Testing Accuracy")
 plt.xlabel('K-Nearest')
 plt.ylabel('Accuracy')
 plt.title('Number of K\'s versus Accuracy')
-plt.legend(bbox_to_anchor=(0.89, 0.28), bbox_transform=plt.gcf().transFigure)
-fig.savefig('figures/nursery_knn_knumber.png')
+plt.legend(bbox_to_anchor=(0.8, 0.6), bbox_transform=plt.gcf().transFigure)
+fig.savefig('figures/letter_knn_knumber.png')
 plt.close(fig)
+
+
 
