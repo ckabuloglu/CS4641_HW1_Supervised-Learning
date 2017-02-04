@@ -33,36 +33,36 @@ validation_accuracy = []
 test_accuracy = []
 k_values = range(1,35,2)
 
-# For knn, experiment on different k values
-for k in k_values:
+# # For knn, experiment on different k values
+# for k in k_values:
 
-    # Define the classifier
-    clf = neighbors.KNeighborsClassifier(k)
-    clf.fit(train_x, train_y)
+#     # Define the classifier
+#     clf = neighbors.KNeighborsClassifier(k)
+#     clf.fit(train_x, train_y)
 
-    print 'K: ', k
+#     print 'K: ', k
 
-    training_accuracy.append(accuracy_score(train_y, clf.predict(train_x)))
-    cv = cross_val_score(clf, train_x, train_y, cv=7).mean()
-    validation_accuracy.append(cv)
-    test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
+#     training_accuracy.append(accuracy_score(train_y, clf.predict(train_x)))
+#     cv = cross_val_score(clf, train_x, train_y, cv=7).mean()
+#     validation_accuracy.append(cv)
+#     test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
 
-# Plot the k values graph
-plt.style.use('ggplot')
-fig = plt.figure()
-line1, = plt.plot(k_values, training_accuracy, 'r', label="Training Accuracy")
-line2, = plt.plot(k_values, validation_accuracy, 'b', label="Cross Validation Score")
-line1, = plt.plot(k_values, test_accuracy, 'g', label="Testing Accuracy")
-plt.xlabel('K-Nearest')
-plt.ylabel('Accuracy')
-plt.title('Number of K\'s versus Accuracy (Letter)')
-plt.legend(loc='best')
-fig.savefig('figures/letter_knn_knumber.png')
-plt.close(fig)
+# # Plot the k values graph
+# plt.style.use('ggplot')
+# fig = plt.figure()
+# line1, = plt.plot(k_values, training_accuracy, 'r', label="Training Accuracy")
+# line2, = plt.plot(k_values, validation_accuracy, 'b', label="Cross Validation Score")
+# line1, = plt.plot(k_values, test_accuracy, 'g', label="Testing Accuracy")
+# plt.xlabel('K-Nearest')
+# plt.ylabel('Accuracy')
+# plt.title('Number of K\'s versus Accuracy (Letter)')
+# plt.legend(loc='best')
+# fig.savefig('figures/letter_knn_knumber.png')
+# plt.close(fig)
 
 
 # After finding the right k value, experiment on training set size
-k = 15
+k = 2
 training_accuracy = []
 validation_accuracy = []
 test_accuracy = []
