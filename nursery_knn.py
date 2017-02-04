@@ -21,7 +21,7 @@ for col in df.columns:
     df[col] = labelencoder.fit_transform(df[col])
 
 # Split into train and test
-train, test = train_test_split(df, test_size = 0.25)
+train, test = train_test_split(df, test_size = 0.20)
 
 label = 'result'
 # Train set

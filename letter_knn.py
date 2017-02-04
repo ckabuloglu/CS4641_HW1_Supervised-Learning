@@ -17,14 +17,14 @@ df = pd.read_csv("letter.csv")
 
 # Convert strings into frequency numbers
 labelencoder=LabelEncoder()
-# for col in df.columns:
-df['lettr'] = labelencoder.fit_transform(df['lettr'])
+for col in df.columns:
+    df[col] = labelencoder.fit_transform(df[col])
 
 # Split into train and test
 train, test = train_test_split(df, test_size = 0.20)
 
-# Train set
 label = 'lettr'
+# Train set
 train_y = train[label]
 train_x = train[[x for x in train.columns if label not in x]]
 # Test/Validation set
@@ -34,11 +34,11 @@ test_x = test[[x for x in test.columns if label not in x]]
 training_accuracy = []
 validation_accuracy = []
 test_accuracy = []
-k_values = range(1,41,2)
+k_values = range(1,35,2)
 
-# For knn
-print "--- KNN ---"
+# For knn, experiment on different k values
 for k in k_values:
+
     # Define the classifier
     clf = neighbors.KNeighborsClassifier(k, weights='distance')
     clf.fit(train_x, train_y)
@@ -50,6 +50,7 @@ for k in k_values:
     validation_accuracy.append(cv)
     test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
 
+# Plot the k values graph
 plt.style.use('ggplot')
 fig = plt.figure()
 line1, = plt.plot(k_values, training_accuracy, 'r', label="Training Accuracy")
@@ -58,9 +59,57 @@ line1, = plt.plot(k_values, test_accuracy, 'g', label="Testing Accuracy")
 plt.xlabel('K-Nearest')
 plt.ylabel('Accuracy')
 plt.title('Number of K\'s versus Accuracy')
-plt.legend(bbox_to_anchor=(0.8, 0.6), bbox_transform=plt.gcf().transFigure)
+plt.legend(loc='best')
 fig.savefig('figures/letter_knn_knumber.png')
 plt.close(fig)
 
 
+# After finding the right k value, experiment on training set size
+k = 15
+training_accuracy = []
+validation_accuracy = []
+test_accuracy = []
+training_size = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
+print "--- KNN ---"
+for s in training_size:
+    # Define the classifier
+    clf = neighbors.KNeighborsClassifier(k, weights='distance')
+    
+    temp_train, _ = train_test_split(train, test_size= 1 - s)
+
+    # Train set
+    percent_train_y = temp_train[label]
+    percent_train_x = temp_train[[x for x in train.columns if label not in x]]
+
+    print percent_train_x.shape
+
+    clf.fit(percent_train_x, percent_train_y)
+
+    print 'Size: ', s, '%'
+    print accuracy_score(test_y, clf.predict(test_x))
+
+    training_accuracy.append(accuracy_score(percent_train_y, clf.predict(percent_train_x)))
+    cv = cross_val_score(clf, percent_train_x, percent_train_y, cv=7).mean()
+    validation_accuracy.append(cv)
+    test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
+
+clf = neighbors.KNeighborsClassifier(k, weights='distance')
+clf.fit(train_x, train_y)
+
+training_accuracy.append(accuracy_score(percent_train_y, clf.predict(percent_train_x)))
+cv = cross_val_score(clf, percent_train_x, percent_train_y, cv=7).mean()
+validation_accuracy.append(cv)
+test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
+training_size.append(1)
+
+fig = plt.figure()
+line1, = plt.plot(training_size, training_accuracy, 'r', label="Training Accuracy")
+line2, = plt.plot(training_size, validation_accuracy, 'b', label="Validation Accuracy")
+line1, = plt.plot(training_size, test_accuracy, 'g', label="Testing Accuracy")
+plt.xlabel('Training Set Size (%)')
+plt.ylabel('Accuracy')
+plt.title('Training size versus Accuracy')
+plt.legend(loc='best')
+fig.savefig('figures/letter_knn_trainingSize.png')
+plt.close(fig)
