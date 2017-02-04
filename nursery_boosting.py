@@ -34,7 +34,9 @@ test_x = test[[x for x in test.columns if label not in x]]
 training_accuracy = []
 validation_accuracy = []
 test_accuracy = []
-n_estimators = range(1,100)
+n_estimators = range(1,101)
+n_max = 0
+mx = 0
 
 # For N estimators in Boosting
 for n in n_estimators:
@@ -44,10 +46,15 @@ for n in n_estimators:
 
     print n
 
-    training_accuracy.append(accuracy_score(train_y, clf.predict(train_x)))
+    ta = accuracy_score(train_y, clf.predict(train_x))
+    training_accuracy.append(ta)
     cv = cross_val_score(clf, train_x, train_y, cv=7).mean()
     validation_accuracy.append(cv)
     test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
+
+    if ta > mx:
+        mx = ta
+        n_max = n
 
 temp_x = arange(3)
 fig = plt.figure()
@@ -68,9 +75,12 @@ validation_accuracy = []
 test_accuracy = []
 training_size = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
+print 'n:', n_max
+print mx
+
 for s in training_size:
     # Define the classifier
-    clf = AdaBoostClassifier(n_estimators=100, random_state=1)
+    clf = AdaBoostClassifier(n_estimators=n_max, random_state=1)
     
     temp_train, _ = train_test_split(train, test_size= 1 - s, random_state=1)
 
@@ -87,7 +97,7 @@ for s in training_size:
     validation_accuracy.append(cv)
     test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
 
-clf = AdaBoostClassifier(n_estimators=100, random_state=1)
+clf = AdaBoostClassifier(n_estimators=n_max, random_state=1)
 clf.fit(train_x, train_y)
 
 training_accuracy.append(accuracy_score(train_y, clf.predict(train_x)))

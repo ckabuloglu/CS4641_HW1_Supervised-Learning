@@ -8,7 +8,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.model_selection import cross_val_score
-from numpy import arange
+from sklearn.datasets import make_hastie_10_2
+from sklearn.ensemble import GradientBoostingClassifier
 import seaborn as sns
 
 sns.set(color_codes=True)
@@ -33,12 +34,11 @@ test_x = test[[x for x in test.columns if label not in x]]
 training_accuracy = []
 validation_accuracy = []
 test_accuracy = []
-n_estimators = range(1,30)
+n_estimators = range(1,51)
 
 # For N estimators in Boosting
 for n in n_estimators:
     clf = AdaBoostClassifier(n_estimators=n, random_state=1)
-
     clf.fit(train_x, train_y)
     print n
 
@@ -47,7 +47,6 @@ for n in n_estimators:
     validation_accuracy.append(cv)
     test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
 
-temp_x = arange(3)
 fig = plt.figure()
 plt.style.use('ggplot')
 line1, = plt.plot(n_estimators, training_accuracy, 'r', label="Training Accuracy")
@@ -68,8 +67,7 @@ training_size = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
 for s in training_size:
     # Define the classifier
-    clf = AdaBoostClassifier(n_estimators=100, random_state=1)
-    
+    clf = AdaBoostClassifier(n_estimators=50, random_state=1)
     temp_train, _ = train_test_split(train, test_size= 1 - s, random_state=1)
 
     # Train set
@@ -86,7 +84,7 @@ for s in training_size:
     validation_accuracy.append(cv)
     test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
 
-clf = AdaBoostClassifier(n_estimators=100, random_state=1)
+clf = AdaBoostClassifier(n_estimators=50, random_state=1)
 clf.fit(train_x, train_y)
 
 training_accuracy.append(accuracy_score(train_y, clf.predict(train_x)))
