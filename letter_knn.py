@@ -37,7 +37,7 @@ k_values = range(1,35,2)
 for k in k_values:
 
     # Define the classifier
-    clf = neighbors.KNeighborsClassifier(k, weights='distance', random_state=1)
+    clf = neighbors.KNeighborsClassifier(k)
     clf.fit(train_x, train_y)
 
     print 'K: ', k
@@ -71,7 +71,7 @@ training_size = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 print "--- KNN ---"
 for s in training_size:
     # Define the classifier
-    clf = neighbors.KNeighborsClassifier(k, weights='distance', random_state=1)
+    clf = neighbors.KNeighborsClassifier(k)
     
     temp_train, _ = train_test_split(train, test_size= 1 - s, random_state=1)
 
@@ -91,7 +91,7 @@ for s in training_size:
     validation_accuracy.append(cv)
     test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
 
-clf = neighbors.KNeighborsClassifier(k, weights='distance', random_state=1)
+clf = neighbors.KNeighborsClassifier(k)
 clf.fit(train_x, train_y)
 
 training_accuracy.append(accuracy_score(train_y, clf.predict(train_x)))

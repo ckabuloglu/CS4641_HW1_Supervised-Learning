@@ -89,7 +89,7 @@ for s in training_size:
     validation_accuracy.append(cv)
     test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
 
-clf = neighbors.KNeighborsClassifier(k, weights='distance', random_state=1)
+clf = neighbors.KNeighborsClassifier(k)
 clf.fit(train_x, train_y)
 
 training_accuracy.append(accuracy_score(train_y, clf.predict(train_x)))

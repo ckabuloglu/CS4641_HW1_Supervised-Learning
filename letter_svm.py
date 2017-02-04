@@ -44,7 +44,6 @@ for kernel in kernels:
         clf = svm.SVC(kernel=kernel, random_state=1)
         
     clf.fit(train_x, train_y)
-    clf.predict(test_x)
     print kernel
 
     training_accuracy.append(accuracy_score(train_y, clf.predict(train_x)))
@@ -52,6 +51,7 @@ for kernel in kernels:
     validation_accuracy.append(cv)
     test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
 
+kernels = ['linear','poly (deg:3)', 'rbf']
 temp_x = arange(3)
 fig = plt.figure()
 plt.style.use('ggplot')
@@ -82,12 +82,9 @@ for s in training_size:
     percent_train_y = temp_train[label]
     percent_train_x = temp_train[[x for x in train.columns if label not in x]]
 
-    print percent_train_x.shape
-
     clf.fit(percent_train_x, percent_train_y)
 
     print 'Size: ', s, '%'
-    print accuracy_score(test_y, clf.predict(test_x))
 
     training_accuracy.append(accuracy_score(percent_train_y, clf.predict(percent_train_x)))
     cv = cross_val_score(clf, percent_train_x, percent_train_y, cv=7).mean()

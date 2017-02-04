@@ -33,14 +33,13 @@ test_x = test[[x for x in test.columns if label not in x]]
 training_accuracy = []
 validation_accuracy = []
 test_accuracy = []
-n_estimators = range(1,100)
+n_estimators = range(1,30)
 
 # For N estimators in Boosting
 for n in n_estimators:
     clf = AdaBoostClassifier(n_estimators=n, random_state=1)
-        
+
     clf.fit(train_x, train_y)
-    clf.predict(test_x)
     print n
 
     training_accuracy.append(accuracy_score(train_y, clf.predict(train_x)))

@@ -41,7 +41,6 @@ for n in n_estimators:
     clf = AdaBoostClassifier(n_estimators=n, random_state=1)
         
     clf.fit(train_x, train_y)
-    clf.predict(test_x)
 
     print n
 
