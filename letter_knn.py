@@ -6,9 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
 from sklearn import neighbors
-from sklearn import svm
 from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import cross_val_predict
 import seaborn as sns
 
 sns.set(color_codes=True)
@@ -17,11 +15,10 @@ df = pd.read_csv("letter.csv")
 
 # Convert strings into frequency numbers
 labelencoder=LabelEncoder()
-for col in df.columns:
-    df[col] = labelencoder.fit_transform(df[col])
+df['lettr'] = labelencoder.fit_transform(df['lettr'])
 
 # Split into train and test
-train, test = train_test_split(df, test_size = 0.20)
+train, test = train_test_split(df, test_size = 0.20, random_state=1)
 
 label = 'lettr'
 # Train set
@@ -40,7 +37,7 @@ k_values = range(1,35,2)
 for k in k_values:
 
     # Define the classifier
-    clf = neighbors.KNeighborsClassifier(k, weights='distance')
+    clf = neighbors.KNeighborsClassifier(k, weights='distance', random_state=1)
     clf.fit(train_x, train_y)
 
     print 'K: ', k
@@ -54,11 +51,11 @@ for k in k_values:
 plt.style.use('ggplot')
 fig = plt.figure()
 line1, = plt.plot(k_values, training_accuracy, 'r', label="Training Accuracy")
-line2, = plt.plot(k_values, validation_accuracy, 'b', label="Validation Accuracy")
+line2, = plt.plot(k_values, validation_accuracy, 'b', label="Cross Validation Score")
 line1, = plt.plot(k_values, test_accuracy, 'g', label="Testing Accuracy")
 plt.xlabel('K-Nearest')
 plt.ylabel('Accuracy')
-plt.title('Number of K\'s versus Accuracy')
+plt.title('Number of K\'s versus Accuracy (Letter)')
 plt.legend(loc='best')
 fig.savefig('figures/letter_knn_knumber.png')
 plt.close(fig)
@@ -74,9 +71,9 @@ training_size = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 print "--- KNN ---"
 for s in training_size:
     # Define the classifier
-    clf = neighbors.KNeighborsClassifier(k, weights='distance')
+    clf = neighbors.KNeighborsClassifier(k, weights='distance', random_state=1)
     
-    temp_train, _ = train_test_split(train, test_size= 1 - s)
+    temp_train, _ = train_test_split(train, test_size= 1 - s, random_state=1)
 
     # Train set
     percent_train_y = temp_train[label]
@@ -94,22 +91,22 @@ for s in training_size:
     validation_accuracy.append(cv)
     test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
 
-clf = neighbors.KNeighborsClassifier(k, weights='distance')
+clf = neighbors.KNeighborsClassifier(k, weights='distance', random_state=1)
 clf.fit(train_x, train_y)
 
-training_accuracy.append(accuracy_score(percent_train_y, clf.predict(percent_train_x)))
-cv = cross_val_score(clf, percent_train_x, percent_train_y, cv=7).mean()
+training_accuracy.append(accuracy_score(train_y, clf.predict(train_x)))
+cv = cross_val_score(clf, train_x, train_y, cv=7).mean()
 validation_accuracy.append(cv)
 test_accuracy.append(accuracy_score(test_y, clf.predict(test_x)))
 training_size.append(1)
 
 fig = plt.figure()
 line1, = plt.plot(training_size, training_accuracy, 'r', label="Training Accuracy")
-line2, = plt.plot(training_size, validation_accuracy, 'b', label="Validation Accuracy")
+line2, = plt.plot(training_size, validation_accuracy, 'b', label="Cross Validation Score")
 line1, = plt.plot(training_size, test_accuracy, 'g', label="Testing Accuracy")
 plt.xlabel('Training Set Size (%)')
 plt.ylabel('Accuracy')
-plt.title('Training size versus Accuracy')
+plt.title('Training size versus Accuracy (Letter)')
 plt.legend(loc='best')
 fig.savefig('figures/letter_knn_trainingSize.png')
 plt.close(fig)
